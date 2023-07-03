@@ -65,8 +65,13 @@ function Lancamentos() {
       return;
     }
 
-    const parsedValor = Number(valor);
+    const parsedValor = parseFloat(valor.replace(",", "."));
     if (isNaN(parsedValor)) {
+      return;
+    }
+
+    if (valor.includes(".") || valor.includes(",")) {
+      alert("Digita só número meu truuuuuuuuta!");
       return;
     }
 
