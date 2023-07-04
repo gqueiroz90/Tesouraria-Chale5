@@ -71,11 +71,11 @@ function Lancamentos() {
     }
 
     if (valor.includes(".") || valor.includes(",")) {
-      alert("Digita só número meu truuuuuuuuta!");
+      alert("Digite apenas números!");
       return;
     }
 
-    const lancamentoTipo = tipo; // Salva o tipo atual em uma nova variável
+    const lancamentoTipo = tipo;
 
     const lancamentoValor = lancamentoTipo === "entrada" ? parsedValor : -parsedValor;
     const novoSaldo = saldo + lancamentoValor;
@@ -91,7 +91,7 @@ function Lancamentos() {
     setValor("");
     setTipo("entrada");
     setSaldo(novoSaldo);
-    setHistorico([lancamento, ...historico]); // Adiciona o lançamento no topo do array
+    setHistorico([lancamento, ...historico]);
 
     if (lancamentoTipo === "entrada") {
       setEntradas((prevEntradas) => prevEntradas + lancamentoValor);
@@ -167,9 +167,9 @@ function Lancamentos() {
             <Heading p={5} size="md">Histórico</Heading>
             <VStack spacing={2} align="start" mt={2} flexGrow={1}>
               {historico.map((item, index) => (
-                <Card key={index} p={4} boxShadow="md" rounded="md" height="100%" minWidth={"15rem"}>
+                <Card key={index} p={4} boxShadow="md" rounded="md" height="100%" minWidth={"20rem"}>
                   <Badge 
-                    maxWidth={"5rem"} 
+                    maxWidth={"4rem"} 
                     colorScheme={item.includes("Entrada") ? "green" : "red"}>
                     {item.includes("Entrada") ? "Entrada" : "Saída"}
                   </Badge>

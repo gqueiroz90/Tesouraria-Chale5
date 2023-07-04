@@ -1,5 +1,5 @@
-import { useState, useRef } from "react";
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   ChakraProvider,
   Box,
@@ -8,7 +8,6 @@ import {
   Card,
   extendTheme,
   useColorMode,
-  Icon,
   Button,
   AlertDialog,
   AlertDialogOverlay,
@@ -16,9 +15,34 @@ import {
   AlertDialogHeader,
   AlertDialogBody,
   AlertDialogFooter,
+  AvatarGroup,
+  Avatar,
+  useBreakpointValue,
 } from "@chakra-ui/react";
-import { IoMdSunny, IoMdMoon } from "react-icons/io";
-import users from './users.json';
+import users from "./users.json";
+
+const avatars = [
+  {
+    name: "Agenor",
+    url: "https://example.com/avatar1.png",
+  },
+  {
+    name: "Arthur",
+    url: "https://example.com/avatar2.png",
+  },
+  {
+    name: "Gabriel",
+    url: "https://example.com/avatar3.png",
+  },
+  {
+    name: "Leonardo",
+    url: "https://example.com/avatar3.png",
+  },
+  {
+    name: "Thiago",
+    url: "https://example.com/avatar3.png",
+  },
+];
 
 const theme = extendTheme({
   config: {
@@ -35,7 +59,7 @@ const theme = extendTheme({
       variants: {
         light: {
           bg: "transparent",
-          color: "gray.400", // Altere a cor para uma cor mais clara, como gray.400
+          color: "gray.400",
           _hover: {
             color: "gray.800",
           },
@@ -52,21 +76,82 @@ const theme = extendTheme({
   },
 });
 
+function LoginCard({ handleLogin }: { handleLogin: (username: string, password: string) => void }) {
+  const size = useBreakpointValue({ base: "md", md: "lg" });
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      handleLogin(username, password);
+    }
+  };
+
+  return (
+    <Card maxWidth="300px" maxHeight="500px">
+      <Box p={4}>
+        <Heading mb={4} textAlign="center">
+          Login
+        </Heading>
+        <AvatarGroup mb={4}>
+          {avatars.map((avatar) => (
+            <Avatar
+              key={avatar.name}
+              name={avatar.name}
+              src={avatar.url}
+              size={size}
+              position="relative"
+              zIndex={2}
+              _before={{
+                content: '""',
+                width: "full",
+                height: "full",
+                rounded: "full",
+                transform: "scale(1.125)",
+                bgGradient: "linear(to-bl, red.400,pink.400)",
+                position: "absolute",
+                zIndex: -1,
+                top: 0,
+                left: 0,
+              }}
+            />
+          ))}
+        </AvatarGroup>
+        <Input
+          placeholder="Usuário"
+          mb={2}
+          onChange={(e) => setUsername(e.target.value)}
+          onKeyPress={handleKeyPress}
+        />
+        <Input
+          type="password"
+          placeholder="Senha"
+          mb={4}
+          onChange={(e) => setPassword(e.target.value)}
+          onKeyPress={handleKeyPress}
+        />
+        <Box display="flex" justifyContent="center">
+          <Button colorScheme="teal" onClick={() => handleLogin(username, password)}>
+            Login
+          </Button>
+        </Box>
+      </Box>
+    </Card>
+  );
+}
 
 function Login() {
   const { colorMode, toggleColorMode } = useColorMode();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState(false);
   const [showErrorDialog, setShowErrorDialog] = useState(false);
   const navigate = useNavigate();
   const leastDestructiveRef = useRef(null);
 
-  const handleLogin = () => {
+  const handleLogin = (username: string, password: string) => {
     const user = users.find((user) => user.username === username);
     if (user && user.password === password) {
-      console.log('Login successful!');
-      navigate('/lancamentos'); // Redireciona para a página de lançamentos
+      console.log("Login successful!");
+      navigate("/lancamentos");
     } else {
       setLoginError(true);
       setShowErrorDialog(true);
@@ -85,31 +170,7 @@ function Login() {
         alignItems="center"
         minHeight="100vh"
       >
-        <Card maxWidth="300px" maxHeight="500px">
-          <Box p={4}>
-            <Heading mb={4} textAlign="center">
-              Login
-            </Heading>
-            <Input
-              placeholder="Usuário"
-              mb={2}
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-            <Input
-              type="password"
-              placeholder="Senha"
-              mb={4}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <Box display="flex" justifyContent="center">
-              <Button colorScheme="teal" onClick={handleLogin}>
-                Login
-              </Button>
-            </Box>
-          </Box>
-        </Card>
+        <LoginCard handleLogin={handleLogin} />
         <AlertDialog
           isOpen={showErrorDialog}
           leastDestructiveRef={leastDestructiveRef}
@@ -122,7 +183,10 @@ function Login() {
                 Nome de usuário ou senha inválidos.
               </AlertDialogBody>
               <AlertDialogFooter>
-                <Button ref={leastDestructiveRef} onClick={handleCloseErrorDialog}>
+                <Button
+                  ref={leastDestructiveRef}
+                  onClick={handleCloseErrorDialog}
+                >
                   OK
                 </Button>
               </AlertDialogFooter>
