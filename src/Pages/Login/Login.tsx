@@ -21,6 +21,11 @@ import {
 } from "@chakra-ui/react";
 import users from "./users.json";
 
+import arturAvatar from "../../assets/avatars/arturAvatar.jpeg";
+import gabrielAvatar from "../../assets/avatars/gabrielAvatar.jpeg";
+import leonardoAvatar from "../../assets/avatars/leonardoAvatar.jpeg";
+import thiagoAvatar from "../../assets/avatars/thiagoAvatar.jpeg";
+
 const avatars = [
   {
     name: "Agenor",
@@ -28,19 +33,19 @@ const avatars = [
   },
   {
     name: "Arthur",
-    url: "https://example.com/avatar2.png",
+    url: arturAvatar,
   },
   {
     name: "Gabriel",
-    url: "https://example.com/avatar3.png",
+    url: gabrielAvatar,
   },
   {
     name: "Leonardo",
-    url: "https://example.com/avatar3.png",
+    url: leonardoAvatar,
   },
   {
     name: "Thiago",
-    url: "https://example.com/avatar3.png",
+    url: thiagoAvatar,
   },
 ];
 
@@ -107,8 +112,8 @@ function LoginCard({ handleLogin }: { handleLogin: (username: string, password: 
                 width: "full",
                 height: "full",
                 rounded: "full",
-                transform: "scale(1.125)",
-                bgGradient: "linear(to-bl, red.400,pink.400)",
+                transform: "scale(1.080)",
+                bgGradient: "linear(to-bl, blue.400,pink.400)",
                 position: "absolute",
                 zIndex: -1,
                 top: 0,
