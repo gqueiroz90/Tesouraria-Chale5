@@ -7,7 +7,6 @@ import {
   Input,
   Card,
   extendTheme,
-  useColorMode,
   Button,
   AlertDialog,
   AlertDialogOverlay,
@@ -21,6 +20,7 @@ import {
 } from "@chakra-ui/react";
 import users from "./users.json";
 
+import agenorAvatar from "../../assets/avatars/agenorAvatar.jpeg";
 import arturAvatar from "../../assets/avatars/arturAvatar.jpeg";
 import gabrielAvatar from "../../assets/avatars/gabrielAvatar.jpeg";
 import leonardoAvatar from "../../assets/avatars/leonardoAvatar.jpeg";
@@ -29,7 +29,7 @@ import thiagoAvatar from "../../assets/avatars/thiagoAvatar.jpeg";
 const avatars = [
   {
     name: "Agenor",
-    url: "https://example.com/avatar1.png",
+    url: agenorAvatar,
   },
   {
     name: "Arthur",
@@ -136,7 +136,7 @@ function LoginCard({ handleLogin }: { handleLogin: (username: string, password: 
           onKeyPress={handleKeyPress}
         />
         <Box display="flex" justifyContent="center">
-          <Button colorScheme="teal" onClick={() => handleLogin(username, password)}>
+          <Button colorScheme="blue" onClick={() => handleLogin(username, password)}>
             Login
           </Button>
         </Box>
@@ -146,7 +146,6 @@ function LoginCard({ handleLogin }: { handleLogin: (username: string, password: 
 }
 
 function Login() {
-  const { colorMode, toggleColorMode } = useColorMode();
   const [loginError, setLoginError] = useState(false);
   const [showErrorDialog, setShowErrorDialog] = useState(false);
   const navigate = useNavigate();
