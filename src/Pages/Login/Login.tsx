@@ -1,8 +1,9 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, ChangeEvent, KeyboardEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ChakraProvider,
   Box,
+  Flex,
   Heading,
   Input,
   Card,
@@ -19,7 +20,6 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 import users from "./users.json";
-
 import agenorAvatar from "../../assets/avatars/agenorAvatar.jpeg";
 import arturAvatar from "../../assets/avatars/arturAvatar.jpeg";
 import gabrielAvatar from "../../assets/avatars/gabrielAvatar.jpeg";
@@ -86,7 +86,7 @@ function LoginCard({ handleLogin }: { handleLogin: (username: string, password: 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       handleLogin(username, password);
     }
@@ -125,14 +125,14 @@ function LoginCard({ handleLogin }: { handleLogin: (username: string, password: 
         <Input
           placeholder="Usuário"
           mb={2}
-          onChange={(e) => setUsername(e.target.value)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setUsername(e.target.value)}
           onKeyPress={handleKeyPress}
         />
         <Input
           type="password"
           placeholder="Senha"
           mb={4}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
           onKeyPress={handleKeyPress}
         />
         <Box display="flex" justifyContent="center">
@@ -174,7 +174,73 @@ function Login() {
         alignItems="center"
         minHeight="100vh"
       >
-        <LoginCard handleLogin={handleLogin} />
+        <Flex justifyContent="center" alignItems="center" width="100%">
+          {/* Card no lado esquerdo */}
+          <Box pr={2}>
+            <Card maxWidth="200px" maxHeight="150px" mt={2}>
+              <Box p={4} mr={10}>
+                <Heading mb={4} textAlign="center">
+                  Card Esquerdo
+                </Heading>
+                {/* Adicione qualquer conteúdo que você desejar para o card esquerdo */}
+              </Box>
+            </Card>
+
+            <Card maxWidth="200px" maxHeight="200px" mt={2}>
+              <Box p={4}>
+                <Heading mb={4} textAlign="center">
+                  Card Esquerdo
+                </Heading>
+                {/* Adicione qualquer conteúdo que você desejar para o card esquerdo */}
+              </Box>
+            </Card>
+
+            <Card maxWidth="200px" maxHeight="200px" mt={2}>
+              <Box p={4}>
+                <Heading mb={4} textAlign="center">
+                  Card Esquerdo
+                </Heading>
+                {/* Adicione qualquer conteúdo que você desejar para o card esquerdo */}
+              </Box>
+            </Card>
+          </Box>
+
+          {/* Formulário de login no centro */}
+          <Box px={2}>
+            <LoginCard handleLogin={handleLogin} />
+          </Box>
+
+          {/* Card no lado direito */}
+          <Box pl={2}>
+            <Card maxWidth="200px" maxHeight="200px" mt={2}>
+              <Box p={4}>
+                <Heading mb={4} textAlign="center">
+                  Card Direito
+                </Heading>
+                {/* Adicione qualquer conteúdo que você desejar para o card direito */}
+              </Box>
+            </Card>
+
+            <Card maxWidth="200px" maxHeight="200px" mt={2}>
+              <Box p={4}>
+                <Heading mb={4} textAlign="center">
+                  Card Direito
+                </Heading>
+                {/* Adicione qualquer conteúdo que você desejar para o card direito */}
+              </Box>
+            </Card>
+
+            <Card maxWidth="200px" maxHeight="200px" mt={2}>
+              <Box p={4}>
+                <Heading mb={4} textAlign="center">
+                  Card Direito
+                </Heading>
+                {/* Adicione qualquer conteúdo que você desejar para o card direito */}
+              </Box>
+            </Card>
+          </Box>
+        </Flex>
+
         <AlertDialog
           isOpen={showErrorDialog}
           leastDestructiveRef={leastDestructiveRef}
