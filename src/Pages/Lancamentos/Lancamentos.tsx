@@ -77,13 +77,16 @@ function Lancamentos() {
 
     const lancamentoTipo = tipo;
 
-    const lancamentoValor = lancamentoTipo === "entrada" ? parsedValor : -parsedValor;
+    const lancamentoValor =
+      lancamentoTipo === "entrada" ? parsedValor : -parsedValor;
     const novoSaldo = saldo + lancamentoValor;
     const valorFormatado = lancamentoValor.toLocaleString("pt-BR", {
       style: "currency",
       currency: "BRL",
     });
-    const lancamento = `${lancamentoTipo[0].toUpperCase() + lancamentoTipo.substring(1)}: ${
+    const lancamento = `${
+      lancamentoTipo[0].toUpperCase() + lancamentoTipo.substring(1)
+    }: ${
       descricao[0].toUpperCase() + descricao.substring(1)
     } ${valorFormatado}`;
 
@@ -107,9 +110,27 @@ function Lancamentos() {
           <Heading mb={4}>Tesouraria</Heading>
           <Card p={4} boxShadow="md" rounded="md" mb={4} maxWidth={"16rem"}>
             <VStack spacing={4} align="start">
-              <Text>Total de Entradas: R$ {entradas.toFixed(2)}</Text>
-              <Text>Total de Saídas: R$ {saidas.toFixed(2)}</Text>
-              <Text>Saldo: R$ {saldo.toFixed(2)}</Text>
+              <Text>
+                Total de Entradas: R${" "}
+                {entradas.toLocaleString("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                })}
+              </Text>
+              <Text>
+                Total de Saídas: R${" "}
+                {saidas.toLocaleString("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                })}
+              </Text>
+              <Text>
+                Saldo: R${" "}
+                {saldo.toLocaleString("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
+                })}
+              </Text>
             </VStack>
           </Card>
           <HStack>
@@ -131,9 +152,19 @@ function Lancamentos() {
                 width={"10rem"}
               />
               {tipo === "entrada" ? (
-                <Icon as={FaArrowUp} color="green.500" ml={"0.5rem"} mt={"0.8rem"} />
+                <Icon
+                  as={FaArrowUp}
+                  color="green.500"
+                  ml={"0.5rem"}
+                  mt={"0.8rem"}
+                />
               ) : (
-                <Icon as={FaArrowDown} color="red.500" ml={"0.5rem"} mt={"0.8rem"} />
+                <Icon
+                  as={FaArrowDown}
+                  color="red.500"
+                  ml={"0.5rem"}
+                  mt={"0.8rem"}
+                />
               )}
             </InputGroup>
           </HStack>
@@ -164,13 +195,23 @@ function Lancamentos() {
         </Box>
         <GridItem flexGrow={1}>
           <Box>
-            <Heading p={5} size="md">Histórico</Heading>
+            <Heading p={5} size="md">
+              Histórico
+            </Heading>
             <VStack spacing={2} align="start" mt={2} flexGrow={1}>
               {historico.map((item, index) => (
-                <Card key={index} p={4} boxShadow="md" rounded="md" height="100%" minWidth={"20rem"}>
-                  <Badge 
-                    maxWidth={"4rem"} 
-                    colorScheme={item.includes("Entrada") ? "green" : "red"}>
+                <Card
+                  key={index}
+                  p={4}
+                  boxShadow="md"
+                  rounded="md"
+                  height="100%"
+                  minWidth={"20rem"}
+                >
+                  <Badge
+                    maxWidth={"4rem"}
+                    colorScheme={item.includes("Entrada") ? "green" : "red"}
+                  >
                     {item.includes("Entrada") ? "Entrada" : "Saída"}
                   </Badge>
                   <Text>{item}</Text>
