@@ -1,107 +1,60 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ChakraProvider,
   Box,
   Heading,
   Text,
   VStack,
-  Input,
-  Button,
-  HStack,
-  Icon,
-  extendTheme,
-  InputGroup,
   Grid,
   Card,
   Badge,
   GridItem,
 } from "@chakra-ui/react";
-import { InputLeftAddon } from "@chakra-ui/react";
-import { FaArrowUp, FaArrowDown } from "react-icons/fa";
+import { extendTheme } from "@chakra-ui/react";
+// Importando diretamente o JSON
+import caderninho from "../../data/caderninho.json";
 
 const theme = extendTheme({
   config: {
     initialColorMode: "dark",
     useSystemColorMode: false,
   },
-  components: {
-    IconButton: {
-      baseStyle: {
-        _hover: {
-          bg: "transparent",
-        },
-      },
-      variants: {
-        light: {
-          bg: "transparent",
-          color: "gray.400",
-          _hover: {
-            color: "gray.800",
-          },
-        },
-        dark: {
-          bg: "transparent",
-          color: "white",
-          _hover: {
-            color: "gray.300",
-          },
-        },
-      },
-    },
-  },
 });
 
+type Lancamento = {
+  id: number;
+  autor: string;
+  data: string;
+  tipo: string;
+  descricao: string;
+  valor: number;
+};
+
 function Lancamentos() {
-  const [entradas, setEntradas] = useState<number>(0);
-  const [saidas, setSaidas] = useState<number>(0);
+  const [lancamentos, setLancamentos] = useState<Lancamento[]>([]);
   const [saldo, setSaldo] = useState<number>(0);
-  const [historico, setHistorico] = useState<string[]>([]);
-  const [descricao, setDescricao] = useState<string>("");
-  const [valor, setValor] = useState<string>("");
-  const [tipo, setTipo] = useState<"entrada" | "saida">("entrada");
 
-  const handleLancamento = () => {
-    if (descricao.trim() === "" || valor.trim() === "") {
-      return;
-    }
+  useEffect(() => {
+    // Definindo os dados diretamente do arquivo importado
+    const lancamentosFiltrados = caderninho.map((item) => ({
+      ...item,
+      tipo: item.tipo === "entrada" || item.tipo === "saida" ? item.tipo : "saida",
+    }));
 
-    const parsedValor = parseFloat(valor.replace(",", "."));
-    if (isNaN(parsedValor)) {
-      return;
-    }
+    setLancamentos(lancamentosFiltrados);
 
-    if (valor.includes(".") || valor.includes(",")) {
-      alert("Digite apenas números!");
-      return;
-    }
+    // Calculando o saldo total
+    const totalSaldo = lancamentosFiltrados.reduce(
+      (acc: number, lancamento: Lancamento) => {
+        return lancamento.tipo === "entrada"
+          ? acc + lancamento.valor
+          : acc - lancamento.valor;
+      },
+      0
+    );
 
-    const lancamentoTipo = tipo;
-
-    const lancamentoValor =
-      lancamentoTipo === "entrada" ? parsedValor : -parsedValor;
-    const novoSaldo = saldo + lancamentoValor;
-    const valorFormatado = lancamentoValor.toLocaleString("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    });
-    const lancamento = `${
-      lancamentoTipo[0].toUpperCase() + lancamentoTipo.substring(1)
-    }: ${
-      descricao[0].toUpperCase() + descricao.substring(1)
-    } ${valorFormatado}`;
-
-    setDescricao("");
-    setValor("");
-    setTipo("entrada");
-    setSaldo(novoSaldo);
-    setHistorico([lancamento, ...historico]);
-
-    if (lancamentoTipo === "entrada") {
-      setEntradas((prevEntradas) => prevEntradas + lancamentoValor);
-    } else {
-      setSaidas((prevSaidas) => prevSaidas + lancamentoValor);
-    }
-  };
+    setSaldo(totalSaldo);
+  }, []);
 
   return (
     <ChakraProvider theme={theme}>
@@ -111,21 +64,7 @@ function Lancamentos() {
           <Card p={4} boxShadow="md" rounded="md" mb={4} maxWidth={"16rem"}>
             <VStack spacing={4} align="start">
               <Text>
-                Total de Entradas: R${" "}
-                {entradas.toLocaleString("pt-BR", {
-                  style: "currency",
-                  currency: "BRL",
-                })}
-              </Text>
-              <Text>
-                Total de Saídas: R${" "}
-                {saidas.toLocaleString("pt-BR", {
-                  style: "currency",
-                  currency: "BRL",
-                })}
-              </Text>
-              <Text>
-                Saldo: R${" "}
+                Saldo Total: R${" "}
                 {saldo.toLocaleString("pt-BR", {
                   style: "currency",
                   currency: "BRL",
@@ -133,75 +72,16 @@ function Lancamentos() {
               </Text>
             </VStack>
           </Card>
-          <HStack>
-            <Input
-              placeholder="Descrição"
-              value={descricao}
-              onChange={(e) => setDescricao(e.target.value)}
-              mb={2}
-              width={"20rem"}
-            />
-            <InputGroup position="relative">
-              <InputLeftAddon children="R$" />
-              <Input
-                placeholder="Valor"
-                value={valor}
-                onChange={(e) => setValor(e.target.value)}
-                mb={2}
-                ml={"0.5rem"}
-                width={"10rem"}
-              />
-              {tipo === "entrada" ? (
-                <Icon
-                  as={FaArrowUp}
-                  color="green.500"
-                  ml={"0.5rem"}
-                  mt={"0.8rem"}
-                />
-              ) : (
-                <Icon
-                  as={FaArrowDown}
-                  color="red.500"
-                  ml={"0.5rem"}
-                  mt={"0.8rem"}
-                />
-              )}
-            </InputGroup>
-          </HStack>
-          <HStack mt={4} spacing={4}>
-            <Button
-              colorScheme={tipo === "entrada" ? "green" : "green"}
-              variant={tipo === "entrada" ? "solid" : "outline"}
-              onClick={() => setTipo("entrada")}
-            >
-              Entrada
-            </Button>
-            <Button
-              colorScheme={tipo === "saida" ? "red" : "red"}
-              variant={tipo === "saida" ? "solid" : "outline"}
-              onClick={() => setTipo("saida")}
-            >
-              Saída
-            </Button>
-            <Button
-              colorScheme="blue"
-              onClick={handleLancamento}
-              mt={0}
-              disabled={descricao.trim() === "" || valor.trim() === ""}
-            >
-              Lançar
-            </Button>
-          </HStack>
         </Box>
         <GridItem flexGrow={1}>
           <Box>
             <Heading p={5} size="md">
-              Histórico
+              Histórico de Lançamentos
             </Heading>
             <VStack spacing={2} align="start" mt={2} flexGrow={1}>
-              {historico.map((item, index) => (
+              {lancamentos.map((lancamento) => (
                 <Card
-                  key={index}
+                  key={lancamento.id}
                   p={4}
                   boxShadow="md"
                   rounded="md"
@@ -210,11 +90,24 @@ function Lancamentos() {
                 >
                   <Badge
                     maxWidth={"4rem"}
-                    colorScheme={item.includes("Entrada") ? "green" : "red"}
+                    colorScheme={
+                      lancamento.tipo === "entrada" ? "green" : "red"
+                    }
                   >
-                    {item.includes("Entrada") ? "Entrada" : "Saída"}
+                    {lancamento.tipo === "entrada" ? "Entrada" : "Saída"}
                   </Badge>
-                  <Text>{item}</Text>
+                  <Text>Autor: {lancamento.autor}</Text>
+                  <Text>
+                    Data: {new Date(lancamento.data).toLocaleDateString()}
+                  </Text>
+                  <Text>Descrição: {lancamento.descricao}</Text>
+                  <Text>
+                    Valor:{" "}
+                    {lancamento.valor.toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </Text>
                 </Card>
               ))}
             </VStack>

@@ -20,7 +20,7 @@ import {
 } from "@chakra-ui/react";
 import users from "./users.json";
 
-import agenorAvatar from "../../assets/avatars/agenorAvatar.jpeg";
+import marlonAvatar from "../../assets/avatars/marlonAvatar.jpeg";
 import arturAvatar from "../../assets/avatars/arturAvatar.jpeg";
 import gabrielAvatar from "../../assets/avatars/gabrielAvatar.jpeg";
 import leonardoAvatar from "../../assets/avatars/leonardoAvatar.jpeg";
@@ -28,8 +28,8 @@ import thiagoAvatar from "../../assets/avatars/thiagoAvatar.jpeg";
 
 const avatars = [
   {
-    name: "Agenor",
-    url: agenorAvatar,
+    name: "Marlon",
+    url: marlonAvatar,
   },
   {
     name: "Arthur",
