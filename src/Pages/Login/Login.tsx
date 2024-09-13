@@ -98,7 +98,8 @@ function LoginCard({ handleLogin }: { handleLogin: (username: string, password: 
         <Heading mb={4} textAlign="center">
           Login
         </Heading>
-        <AvatarGroup mb={4}>
+        <AvatarGroup mb={4} display="flex"
+        justifyContent="center">
           {avatars.map((avatar) => (
             <Avatar
               key={avatar.name}
