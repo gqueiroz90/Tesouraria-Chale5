@@ -1,0 +1,27 @@
+[
+    {
+      "id": 1,
+      "autor": "Chalé5",
+      "data": "2024-09-06",
+      "tipo": "entrada",
+      "descricao": "Saldo em Caixa",
+      "valor": 13.00
+    },
+    {
+      "id": 2,
+      "autor": "Vagabundos",
+      "data": "2024-09-06",
+      "tipo": "entrada",
+      "descricao": "Rateio do Aluguel + Contas",
+      "valor": 1640.00
+    },
+    {
+        "id": 3,
+        "autor": "Dona Leila",
+        "data": "2024-09-06",
+        "tipo": "saida",
+        "descricao": "Pagamento do Aluguel",
+        "valor": 1640.00
+      }
+  ]
+  
