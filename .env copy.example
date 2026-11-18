@@ -1,0 +1,16 @@
+# Firebase client configuration (public app identifiers, not service account credentials)
+VITE_FIREBASE_API_KEY=
+VITE_FIREBASE_AUTH_DOMAIN=
+VITE_FIREBASE_PROJECT_ID=
+VITE_FIREBASE_APP_ID=
+VITE_API_URL=
+
+# Backend configuration
+FIREBASE_PROJECT_ID=
+GOOGLE_SHEETS_ID=1oRJuoMDKEtwWWghR4q9StnoD4wp02PFOWaGOcZ9ozes
+GOOGLE_SHEETS_TAB=Lançamentos
+ALLOWED_EMAILS=amigo1@example.com,amigo2@example.com,amigo3@example.com,amigo4@example.com,amigo5@example.com
+WEB_ORIGIN=http://localhost:5173
+PORT=8787
+# Local only: path to service account JSON; on Cloud Run use the attached service account instead
+GOOGLE_APPLICATION_CREDENTIALS=

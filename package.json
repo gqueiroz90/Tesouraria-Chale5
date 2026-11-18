@@ -1,57 +1,36 @@
 {
-  "name": "tesouraria-chale5",
-  "version": "0.1.0",
+  "name": "chale5",
   "private": true,
-  "dependencies": {
-    "@chakra-ui/react": "^2.7.1",
-    "@emotion/react": "^11.11.1",
-    "@emotion/styled": "^11.11.0",
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "@types/jest": "^27.5.2",
-    "@types/node": "^16.18.37",
-    "@types/react": "^18.2.14",
-    "@types/react-dom": "^18.2.6",
-    "express": "^4.18.2",
-    "framer-motion": "^10.12.17",
-    "pg": "^8.11.1",
-    "pg-pool": "^3.6.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-icons": "^4.10.1",
-    "react-router": "^6.14.0",
-    "react-router-dom": "^6.14.0",
-    "react-scripts": "5.0.1",
-    "typescript": "^4.9.5",
-    "web-vitals": "^2.1.4"
-  },
+  "version": "0.1.0",
+  "type": "module",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+  "dependencies": {
+    "@chakra-ui/react": "^2.10.4",
+    "@emotion/react": "^11.13.5",
+    "@emotion/styled": "^11.13.5",
+    "dotenv": "^18.0.10",
+    "express": "^5.3.0",
+    "firebase": "^13.4.0",
+    "firebase-admin": "^14.5.1",
+    "framer-motion": "^11.15.0",
+    "googleapis": "^190.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-icons": "^5.7.0"
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
-  "main": "index.js",
-  "repository": "git@github.com:gqueiroz90/Tesouraria-Chale5.git",
-  "author": "<gabriel_luigi37@hotmail.com>",
-  "license": "MIT"
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.6",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^10.0.7",
+    "tsx": "^4.23.15",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11"
+  }
 }

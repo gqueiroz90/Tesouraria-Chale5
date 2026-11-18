@@ -1,0 +1,28 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isOwner() {
+      return request.auth != null
+        && request.auth.token.email == 'gabrielcostadequeiroz@gmail.com'
+        && request.auth.token.email_verified == true;
+    }
+
+    function validExpense() {
+      return request.resource.data.keys().hasOnly(['description', 'category', 'amount', 'date'])
+        && request.resource.data.keys().hasAll(['description', 'category', 'amount', 'date'])
+        && request.resource.data.description is string
+        && request.resource.data.description.size() <= 160
+        && request.resource.data.category in ['aluguel', 'agua', 'luz', 'outros']
+        && request.resource.data.amount is number
+        && request.resource.data.amount > 0
+        && request.resource.data.date is string
+        && request.resource.data.date.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$');
+    }
+
+    match /expenses/{expenseId} {
+      allow read, delete: if isOwner();
+      allow create, update: if isOwner() && validExpense();
+    }
+  }
+}
