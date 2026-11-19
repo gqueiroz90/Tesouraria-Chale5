@@ -81,11 +81,12 @@ export default function App({ user, onSignOut }: Props) {
         w={{ base: "full", md: "256px" }}
         flexShrink={0}
         direction={{ base: "row", md: "column" }}
+        wrap={{ base: "wrap", md: "nowrap" }}
         p={{ base: 3, md: 6 }}
-        gap={{ base: 1, md: 2 }}
+        gap={{ base: 2, md: 2 }}
         align={{ base: "center", md: "stretch" }}
       >
-        <Flex align="center" gap={3} mb={{ md: 10 }} mr={{ base: "auto", md: 0 }}>
+        <Flex align="center" gap={3} mb={{ md: 10 }} w={{ base: "full", md: "auto" }}>
           <Flex
             boxSize="42px"
             align="center"
@@ -102,7 +103,7 @@ export default function App({ user, onSignOut }: Props) {
               <GiPalmTree aria-hidden="true" />
               Chalé 5
             </Heading>
-            <Box mt={1} color="muted" fontSize="xs" fontWeight="600" letterSpacing="0.04em">
+            <Box mt={1} color="muted" fontSize="xs" fontWeight="600" letterSpacing="0.04em" noOfLines={1}>
               CONTAS COMPARTILHADAS
             </Box>
           </Box>
@@ -116,7 +117,8 @@ export default function App({ user, onSignOut }: Props) {
             colorScheme={page === n.key ? "ocean" : undefined}
             color={page === n.key ? undefined : "muted"}
             borderRadius="12px"
-            h="44px"
+            h={{ base: "40px", md: "44px" }}
+            flex={{ base: 1, md: "none" }}
             onClick={() => setPage(n.key)}
           >
             {n.label}
@@ -133,9 +135,11 @@ export default function App({ user, onSignOut }: Props) {
               Despesas da casa divididas entre cinco amigos.
             </Box>
           </Box>
-          <Flex gap={2} align="center" wrap="wrap">
+          <Flex gap={2} align="center" wrap="wrap" w={{ base: "full", md: "auto" }}>
             <Select
-              w={{ base: "150px", sm: "190px" }}
+              flex={{ base: 1, sm: "none" }}
+              minW={0}
+              w={{ base: "auto", sm: "190px" }}
               bg="surface"
               borderColor="line"
               value={period}
@@ -160,12 +164,14 @@ export default function App({ user, onSignOut }: Props) {
             <Button
               variant="ghost"
               leftIcon={<LuLogOut />}
+              iconSpacing={{ base: 0, sm: 2 }}
+              px={{ base: 3, sm: 4 }}
               onClick={() => void onSignOut()}
               aria-label={`Sair da conta ${user.email ?? "Google"}`}
             >
-              Sair
+              <Box as="span" display={{ base: "none", sm: "inline" }}>Sair</Box>
             </Button>
-            <Button colorScheme="ocean" onClick={openNew} borderRadius="12px">
+            <Button colorScheme="ocean" onClick={openNew} borderRadius="12px" w={{ base: "full", sm: "auto" }}>
               Novo lançamento
             </Button>
           </Flex>

@@ -178,7 +178,7 @@ export default function Dashboard({ expenses, showMonths }: Props) {
           <Box display="flex" flexDirection="column" gap={4}>
             {monthTotals.map(([m, t]) => (
               <Box key={m}>
-                <Box display="flex" justifyContent="space-between" mb={1}>
+                <Box display="flex" justifyContent="space-between" flexWrap="wrap" columnGap={3} mb={1}>
                   <Text fontWeight="600">{monthLabel(m)}</Text>
                   <Text>
                     {brl(t)}{" "}

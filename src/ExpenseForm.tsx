@@ -67,9 +67,9 @@ export default function ExpenseForm({ isOpen, onClose, editing, onSave }: Props)
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} isCentered scrollBehavior="inside">
       <ModalOverlay bg="blackAlpha.600" />
-      <ModalContent bg="surface" color="ink" borderWidth="1px" borderColor="line">
+      <ModalContent bg="surface" color="ink" borderWidth="1px" borderColor="line" mx={4}>
         <ModalHeader>{editing ? "Editar lançamento" : "Novo lançamento"}</ModalHeader>
         <ModalCloseButton color="muted" _hover={{ bg: "sunken" }} />
         <ModalBody display="flex" flexDirection="column" gap={4}>
