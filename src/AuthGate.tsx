@@ -12,6 +12,7 @@ import {
   Spinner,
   Text,
 } from "@chakra-ui/react";
+import { keyframes } from "@emotion/react";
 import {
   GoogleAuthProvider,
   onAuthStateChanged,
@@ -21,22 +22,35 @@ import {
 } from "firebase/auth";
 import { FcGoogle } from "react-icons/fc";
 import { GiPalmTree } from "react-icons/gi";
-import { auth, isFirebaseConfigured, OWNER_EMAIL } from "./firebase";
+import { auth, isAllowedEmail, isFirebaseConfigured } from "./firebase";
 import App from "./App";
+
+const LOGIN_SPLASH_MS = 1000;
+
+const pulse = keyframes`
+  0%, 100% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.15); opacity: 1; }
+`;
 
 export default function AuthGate() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(isFirebaseConfigured);
   const [error, setError] = useState("");
+  const [minDelayDone, setMinDelayDone] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setMinDelayDone(true), LOGIN_SPLASH_MS);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const firebaseAuth = auth;
     if (!firebaseAuth) return;
 
     return onAuthStateChanged(firebaseAuth, (nextUser) => {
-      if (nextUser && nextUser.email?.toLowerCase() !== OWNER_EMAIL) {
+      if (nextUser && !isAllowedEmail(nextUser.email)) {
         setUser(null);
-        setError(`Acesso restrito a ${OWNER_EMAIL}.`);
+        setError("Esta conta não tem acesso ao sistema.");
         void signOut(firebaseAuth);
       } else {
         setUser(nextUser);
@@ -51,9 +65,9 @@ export default function AuthGate() {
     setError("");
     try {
       const result = await signInWithPopup(auth, new GoogleAuthProvider());
-      if (result.user.email?.toLowerCase() !== OWNER_EMAIL) {
+      if (!isAllowedEmail(result.user.email)) {
         await signOut(auth);
-        setError(`Entre com a conta ${OWNER_EMAIL}.`);
+        setError("Esta conta não tem acesso ao sistema.");
       }
     } catch {
       setError("Não foi possível entrar com Google. Tente novamente.");
@@ -73,19 +87,26 @@ export default function AuthGate() {
     );
   }
 
-  if (loading) {
-    return (
-      <Center minH="100vh" bg="pageBg">
-        <Spinner color="ocean.600" />
-      </Center>
-    );
-  }
-
-  if (user) {
+  if (user && !loading) {
     const firebaseAuth = auth;
     if (firebaseAuth) {
       return <App user={user} onSignOut={() => signOut(firebaseAuth)} />;
     }
+  }
+
+  if (loading || !minDelayDone) {
+    return (
+      <Center minH="100vh" bg="pageBg" flexDirection="column" gap={5}>
+        <Box
+          fontSize="5xl"
+          color="ocean.600"
+          animation={`${pulse} 1s ease-in-out infinite`}
+        >
+          <GiPalmTree aria-hidden="true" />
+        </Box>
+        <Spinner color="ocean.600" size="md" />
+      </Center>
+    );
   }
 
   return (

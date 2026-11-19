@@ -20,4 +20,11 @@ const app = isFirebaseConfigured
 export const auth = app ? getAuth(app) : null;
 export const db = app ? getFirestore(app) : null;
 
-export const OWNER_EMAIL = "gabrielcostadequeiroz@gmail.com";
+export const ALLOWED_EMAILS = [
+  "gabrielcostadequeiroz@gmail.com",
+  "beatrizma8@mail.com",
+  "arturhenrique722@gmail.com",
+];
+
+export const isAllowedEmail = (email?: string | null) =>
+  !!email && ALLOWED_EMAILS.includes(email.toLowerCase());
