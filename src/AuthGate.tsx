@@ -13,6 +13,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { keyframes } from "@emotion/react";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   GoogleAuthProvider,
   onAuthStateChanged,
@@ -26,6 +27,15 @@ import { auth, isAllowedEmail, isFirebaseConfigured } from "./firebase";
 import App from "./App";
 
 const LOGIN_SPLASH_MS = 1000;
+const LOGIN_SPLASH_MAX_MS = 5000;
+
+const AVATARS = [
+  ["5451d986-b6fc-44b9-bf98-7bf5b7564e54", "Integrante 1"],
+  ["efa7a674-ebf7-442f-9582-fb8d37e28481", "Integrante 5"],
+  ["0ea008e3-4daa-4b8e-b6d5-f007232cf10f", "Integrante 2"],
+  ["9b39a5c6-a8dc-4526-910f-f845b2fd5383", "Integrante 4"],
+  ["c2cd0dc6-41a9-48f0-bc5b-cb218763ad01", "Integrante 3"],
+].map(([id, label]) => ({ src: `/avatars/${id}.png`, label }));
 
 const pulse = keyframes`
   0%, 100% { transform: scale(1); opacity: 0.7; }
@@ -37,10 +47,38 @@ export default function AuthGate() {
   const [loading, setLoading] = useState(isFirebaseConfigured);
   const [error, setError] = useState("");
   const [minDelayDone, setMinDelayDone] = useState(false);
+  const [imagesReady, setImagesReady] = useState(false);
+  const [maxDelayDone, setMaxDelayDone] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setMaxDelayDone(true), LOGIN_SPLASH_MAX_MS);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => setMinDelayDone(true), LOGIN_SPLASH_MS);
     return () => clearTimeout(timer);
+  }, []);
+
+  // Uma imagem com erro não deve travar o splash para sempre.
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all(
+      AVATARS.map(
+        ({ src }) =>
+          new Promise<void>((resolve) => {
+            const img = new Image();
+            img.onload = img.onerror = () => resolve();
+            img.src = src;
+            if (img.complete) resolve();
+          })
+      )
+    ).then(() => {
+      if (!cancelled) setImagesReady(true);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
@@ -94,56 +132,68 @@ export default function AuthGate() {
     }
   }
 
-  if (loading || !minDelayDone) {
-    return (
-      <Center minH="100vh" bg="pageBg" flexDirection="column" gap={5}>
-        <Box
-          fontSize="5xl"
-          color="ocean.600"
-          animation={`${pulse} 1s ease-in-out infinite`}
-        >
-          <GiPalmTree aria-hidden="true" />
-        </Box>
-        <Spinner color="ocean.600" size="md" />
-      </Center>
-    );
-  }
+  const showSplash = loading || !minDelayDone || (!imagesReady && !maxDelayDone);
 
   return (
-    <Center minH="100vh" bg="pageBg" p={6}>
-      <Flex direction="column" gap={4} maxW="sm" w="full" bg="surface" borderWidth="1px" borderColor="line" borderRadius="20px" p={8}>
-        <Heading size="lg" display="flex" alignItems="center" justifyContent="center" textAlign="center" gap={2}>
-          <GiPalmTree aria-hidden="true" />
-          Chalé 5
-        </Heading>
-        <AvatarGroup
-          size="lg"
-          max={5}
-          spacing="-3"
-          justifyContent="center"
-          sx={{ "& .chakra-avatar": { border: "none !important" } }}
-        >
-          {[
-            ["5451d986-b6fc-44b9-bf98-7bf5b7564e54", "Integrante 1"],
-            ["efa7a674-ebf7-442f-9582-fb8d37e28481", "Integrante 5"],
-            ["0ea008e3-4daa-4b8e-b6d5-f007232cf10f", "Integrante 2"],
-            ["9b39a5c6-a8dc-4526-910f-f845b2fd5383", "Integrante 4"],
-            ["c2cd0dc6-41a9-48f0-bc5b-cb218763ad01", "Integrante 3"],
-          ].map(([id, label]) => (
-            <Avatar
-              key={id}
-              src={`/avatars/${id}.png`}
-              aria-label={label}
-              bg="whiteAlpha.200"
-              icon={<span />}
-            />
-          ))}
-        </AvatarGroup>
-        {error && <Alert status="error" borderRadius="12px"><AlertIcon />{error}</Alert>}
-        <Button colorScheme="ocean" leftIcon={<FcGoogle />} onClick={login}>
-          Entrar com Google
-        </Button>
-      </Flex>
+    <Center minH="100vh" bg="pageBg" p={6} overflow="hidden">
+      <AnimatePresence mode="wait">
+        {showSplash ? (
+          <motion.div
+            key="splash"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, scale: 0.85 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+          >
+            <Flex direction="column" align="center" gap={5}>
+              <Box
+                fontSize="5xl"
+                color="ocean.600"
+                animation={`${pulse} 1s ease-in-out infinite`}
+              >
+                <GiPalmTree aria-hidden="true" />
+              </Box>
+              <Spinner color="ocean.600" size="md" />
+            </Flex>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="login"
+            style={{ width: "100%", maxWidth: "24rem" }}
+            initial={{ opacity: 0, y: 24, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ type: "spring", stiffness: 180, damping: 22 }}
+          >
+            <Flex direction="column" gap={4} w="full" bg="surface" borderWidth="1px" borderColor="line" borderRadius="20px" p={8}>
+              <Heading size="lg" display="flex" alignItems="center" justifyContent="center" textAlign="center" gap={2}>
+                <GiPalmTree aria-hidden="true" />
+                Chalé 5
+              </Heading>
+              <AvatarGroup
+                size="lg"
+                max={5}
+                spacing="-3"
+                justifyContent="center"
+                sx={{ "& .chakra-avatar": { border: "none !important" } }}
+              >
+                {AVATARS.map(({ src, label }) => (
+                  <Avatar
+                    key={src}
+                    src={src}
+                    aria-label={label}
+                    bg="whiteAlpha.200"
+                    icon={<span />}
+                  />
+                ))}
+              </AvatarGroup>
+              {error && <Alert status="error" borderRadius="12px"><AlertIcon />{error}</Alert>}
+              <Button colorScheme="ocean" leftIcon={<FcGoogle />} onClick={login}>
+                Entrar com Google
+              </Button>
+            </Flex>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </Center>
   );
 }
