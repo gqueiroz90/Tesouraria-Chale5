@@ -102,12 +102,21 @@ export default function AuthGate() {
           justifyContent="center"
           sx={{ "& .chakra-avatar": { border: "none !important" } }}
         >
-          <Avatar src="/avatars/5451d986-b6fc-44b9-bf98-7bf5b7564e54.png" name="Integrante 1" />
-          <Avatar src="/avatars/efa7a674-ebf7-442f-9582-fb8d37e28481.png" name="Integrante 5" />
-          <Avatar src="/avatars/0ea008e3-4daa-4b8e-b6d5-f007232cf10f.png" name="Integrante 2" />
-          <Avatar src="/avatars/9b39a5c6-a8dc-4526-910f-f845b2fd5383.png" name="Integrante 4" />
-          <Avatar src="/avatars/c2cd0dc6-41a9-48f0-bc5b-cb218763ad01.png" name="Integrante 3" />         
-        
+          {[
+            ["5451d986-b6fc-44b9-bf98-7bf5b7564e54", "Integrante 1"],
+            ["efa7a674-ebf7-442f-9582-fb8d37e28481", "Integrante 5"],
+            ["0ea008e3-4daa-4b8e-b6d5-f007232cf10f", "Integrante 2"],
+            ["9b39a5c6-a8dc-4526-910f-f845b2fd5383", "Integrante 4"],
+            ["c2cd0dc6-41a9-48f0-bc5b-cb218763ad01", "Integrante 3"],
+          ].map(([id, label]) => (
+            <Avatar
+              key={id}
+              src={`/avatars/${id}.png`}
+              aria-label={label}
+              bg="whiteAlpha.200"
+              icon={<span />}
+            />
+          ))}
         </AvatarGroup>
         {error && <Alert status="error" borderRadius="12px"><AlertIcon />{error}</Alert>}
         <Button colorScheme="ocean" leftIcon={<FcGoogle />} onClick={login}>
