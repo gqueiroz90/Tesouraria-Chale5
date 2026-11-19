@@ -74,7 +74,7 @@ export default function Dashboard({ expenses, showMonths }: Props) {
             {brl(total)}
           </Heading>
           <Text mt={2} opacity={0.88}>
-            {expenses.length} {expenses.length === 1 ? "lançamento" : "lançamentos"} neste período
+            {expenses.length} {expenses.length === 1 ? "lançamento" : "lançamentos"} realizados
           </Text>
         </Box>
         <Flex
@@ -101,9 +101,9 @@ export default function Dashboard({ expenses, showMonths }: Props) {
             <LuUsers />
           </Flex>
           <Box>
-            <Text fontSize="sm" opacity={0.9}>Parte de cada amigo</Text>
+            <Text fontSize="sm" opacity={0.9}>Divisão</Text>
             <Heading size="lg" mt={1}>{brl(total / PEOPLE)}</Heading>
-            <Text fontSize="xs" mt={1} opacity={0.8}>dividido igualmente entre {PEOPLE}</Text>
+            <Text fontSize="xs" mt={1} opacity={0.8}>igualmente entre {PEOPLE}</Text>
           </Box>
         </Flex>
         <Box
@@ -124,7 +124,6 @@ export default function Dashboard({ expenses, showMonths }: Props) {
         <Flex justify="space-between" align="end" gap={3} mb={3} wrap="wrap">
           <Box>
             <Heading size="md">Despesas por categoria</Heading>
-            <Text color="muted" fontSize="sm" mt={1}>A divisão da conta para cada pessoa.</Text>
           </Box>
           <Text color="muted" fontSize="sm">Total: {brl(total)}</Text>
         </Flex>

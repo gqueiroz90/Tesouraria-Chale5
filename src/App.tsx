@@ -104,7 +104,7 @@ export default function App({ user, onSignOut }: Props) {
               Chalé 5
             </Heading>
             <Box mt={1} color="muted" fontSize="xs" fontWeight="600" letterSpacing="0.04em" noOfLines={1}>
-              CONTAS COMPARTILHADAS
+               TESOURARIA
             </Box>
           </Box>
         </Flex>
@@ -132,7 +132,7 @@ export default function App({ user, onSignOut }: Props) {
           <Box>
             <Heading size="lg">{NAV.find((n) => n.key === page)?.label}</Heading>
             <Box color="muted" fontSize="sm" mt={1}>
-              Despesas da casa divididas entre cinco amigos.
+              Despesas da casa divididas.
             </Box>
           </Box>
           <Flex gap={2} align="center" wrap="wrap" w={{ base: "full", md: "auto" }}>
