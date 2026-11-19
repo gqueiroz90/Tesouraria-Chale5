@@ -1,4 +1,3 @@
-import React from "react";
 import { Box, Card, Heading } from "@chakra-ui/react";
 
 function RightCard() {

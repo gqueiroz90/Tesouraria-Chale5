@@ -147,7 +147,6 @@ function LoginCard({ handleLogin }: { handleLogin: (username: string, password: 
 }
 
 function Login() {
-  const [loginError, setLoginError] = useState(false);
   const [showErrorDialog, setShowErrorDialog] = useState(false);
   const navigate = useNavigate();
   const leastDestructiveRef = useRef(null);
@@ -158,7 +157,6 @@ function Login() {
       console.log("Login successful!");
       navigate("/lancamentos");
     } else {
-      setLoginError(true);
       setShowErrorDialog(true);
     }
   };
