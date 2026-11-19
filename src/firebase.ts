@@ -22,7 +22,7 @@ export const db = app ? getFirestore(app) : null;
 
 export const ALLOWED_EMAILS = [
   "gabrielcostadequeiroz@gmail.com",
-  "beatrizma8@mail.com",
+  "beatrizma8@gmail.com",
   "arturhenrique722@gmail.com",
 ];
 
