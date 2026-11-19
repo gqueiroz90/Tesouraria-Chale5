@@ -17,17 +17,19 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { brl, CATEGORIES, PEOPLE, type Category, type Expense } from "./types";
+import { motion } from "framer-motion";
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   editing: Expense | null;
   onSave: (e: Omit<Expense, "id"> & { id?: string }) => Promise<void>;
+  onBack?: () => void;
 }
 
 const today = () => new Date().toISOString().slice(0, 10);
 
-export default function ExpenseForm({ isOpen, onClose, editing, onSave }: Props) {
+export default function ExpenseForm({ isOpen, onClose, editing, onSave, onBack }: Props) {
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState<Category>("aluguel");
   const [amount, setAmount] = useState("");
@@ -72,7 +74,13 @@ export default function ExpenseForm({ isOpen, onClose, editing, onSave }: Props)
       <ModalContent bg="surface" color="ink" borderWidth="1px" borderColor="line" mx={4}>
         <ModalHeader>{editing ? "Editar lançamento" : "Novo lançamento"}</ModalHeader>
         <ModalCloseButton color="muted" _hover={{ bg: "sunken" }} />
-        <ModalBody display="flex" flexDirection="column" gap={4}>
+        <ModalBody>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.22, ease: "easeOut" }}
+            style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+          >
           {saveError && <Text color="red.500" role="alert">{saveError}</Text>}
           <FormControl>
             <FormLabel color="ink">Categoria</FormLabel>
@@ -85,11 +93,13 @@ export default function ExpenseForm({ isOpen, onClose, editing, onSave }: Props)
               _hover={{ borderColor: "ocean.400" }}
               _focusVisible={{ borderColor: "ocean.400", boxShadow: "0 0 0 1px var(--chakra-colors-ocean-400)" }}
             >
-              {Object.entries(CATEGORIES).map(([k, c]) => (
+              {Object.entries(CATEGORIES)
+                .filter(([k]) => k !== "caixa" || category === "caixa")
+                .map(([k, c]) => (
                 <option key={k} value={k}>
-                  {c.label}
+                  {k === "caixa" ? `${c.label} (registro existente)` : c.label}
                 </option>
-              ))}
+                ))}
             </Select>
           </FormControl>
           <FormControl>
@@ -134,8 +144,10 @@ export default function ExpenseForm({ isOpen, onClose, editing, onSave }: Props)
               _focusVisible={{ borderColor: "ocean.400", boxShadow: "0 0 0 1px var(--chakra-colors-ocean-400)" }}
             />
           </FormControl>
+          </motion.div>
         </ModalBody>
         <ModalFooter gap={2}>
+          {onBack && <Button variant="ghost" mr="auto" onClick={onBack}>Voltar</Button>}
           <Button variant="ghost" onClick={onClose}>
             Cancelar
           </Button>

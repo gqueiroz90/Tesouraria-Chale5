@@ -23,17 +23,28 @@ import {
   CATEGORIES,
   formatDate,
   PEOPLE,
+  type CashEntry,
   type Category,
   type Expense,
 } from "./types";
 
 interface Props {
   expenses: Expense[]; // already filtered by period
+  cashEntries: CashEntry[];
   onEdit: (e: Expense) => void;
   onDelete: (id: string) => Promise<void>;
+  onEditCashEntry: (entry: CashEntry) => void;
+  onDeleteCashEntry: (entry: CashEntry) => Promise<void>;
 }
 
-export default function ExpenseList({ expenses, onEdit, onDelete }: Props) {
+export default function ExpenseList({
+  expenses,
+  cashEntries,
+  onEdit,
+  onDelete,
+  onEditCashEntry,
+  onDeleteCashEntry,
+}: Props) {
   const [filter, setFilter] = useState<Category | "todas">("todas");
 
   const keys = ["todas", ...Object.keys(CATEGORIES)] as (Category | "todas")[];
@@ -46,7 +57,54 @@ export default function ExpenseList({ expenses, onEdit, onDelete }: Props) {
   };
 
   return (
-    <Box bg="surface" borderWidth="1px" borderRadius="lg" p={{ base: 3, md: 4 }}>
+    <Box display="flex" flexDirection="column" gap={4}>
+      {cashEntries.length > 0 && (
+        <Box bg="surface" borderWidth="1px" borderColor="line" borderRadius="lg" p={{ base: 3, md: 4 }}>
+          <Text fontWeight="700" mb={3}>Entradas para o caixa</Text>
+          <Stack spacing={3}>
+            {cashEntries.map((entry) => (
+              <Flex
+                key={entry.id}
+                justify="space-between"
+                align={{ base: "flex-start", sm: "center" }}
+                direction={{ base: "column", sm: "row" }}
+                gap={2}
+                borderWidth="1px"
+                borderColor="line"
+                borderRadius="14px"
+                p={3}
+              >
+                <Box minW={0}>
+                  <Flex align="center" gap={2} wrap="wrap">
+                    <Badge colorScheme={entry.type === "Locação" ? "teal" : "blue"}>
+                      {entry.type}
+                    </Badge>
+                    <Text fontSize="sm" color="muted">{formatDate(entry.date)}</Text>
+                  </Flex>
+                  <Text fontWeight="600" mt={1} wordBreak="break-word">{entry.description}</Text>
+                </Box>
+                <Flex align="center" gap={3} w={{ base: "full", sm: "auto" }} justify="space-between">
+                  <Text fontWeight="700">{brl(entry.amount)}</Text>
+                  <ButtonGroup size="xs" variant="outline">
+                    <Button onClick={() => onEditCashEntry(entry)}>Editar</Button>
+                    <Button
+                      colorScheme="red"
+                      onClick={() => {
+                        if (confirm(`Excluir esta ${entry.type.toLowerCase()}?`)) {
+                          void onDeleteCashEntry(entry);
+                        }
+                      }}
+                    >
+                      Excluir
+                    </Button>
+                  </ButtonGroup>
+                </Flex>
+              </Flex>
+            ))}
+          </Stack>
+        </Box>
+      )}
+      <Box bg="surface" borderWidth="1px" borderRadius="lg" p={{ base: 3, md: 4 }}>
       <Tabs
         variant="soft-rounded"
         colorScheme="ocean"
@@ -63,7 +121,7 @@ export default function ExpenseList({ expenses, onEdit, onDelete }: Props) {
       </Tabs>
 
       {rows.length === 0 ? (
-        <Text color="muted">Nenhum lançamento.</Text>
+        <Text color="muted">Nenhuma despesa neste período.</Text>
       ) : (
         <>
           <Stack spacing={3} display={{ base: "flex", lg: "none" }}>
@@ -129,6 +187,7 @@ export default function ExpenseList({ expenses, onEdit, onDelete }: Props) {
           </TableContainer>
         </>
       )}
+      </Box>
     </Box>
   );
 }

@@ -55,13 +55,26 @@ export function useExpenses() {
     const { id, ...data } = expense;
     if (id) {
       await updateDoc(doc(firestore, "expenses", id), data);
+      setExpenses((current) =>
+        current
+          .map((item) => (item.id === id ? { ...item, ...data } : item))
+          .sort((a, b) => b.date.localeCompare(a.date))
+      );
     } else {
-      await addDoc(collection(firestore, "expenses"), data);
+      const created = await addDoc(collection(firestore, "expenses"), data);
+      setExpenses((current) => {
+        const savedExpense = { id: created.id, ...data };
+        return [
+          ...current.filter((item) => item.id !== created.id),
+          savedExpense,
+        ].sort((a, b) => b.date.localeCompare(a.date));
+      });
     }
   };
 
   const remove = async (id: string) => {
     await deleteDoc(doc(requireDb(), "expenses", id));
+    setExpenses((current) => current.filter((expense) => expense.id !== id));
   };
 
   return { expenses, loading, error, save, remove };
