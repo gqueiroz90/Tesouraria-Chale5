@@ -7,7 +7,10 @@ service cloud.firestore {
         && request.auth.token.email in [
           'gabrielcostadequeiroz@gmail.com',
           'beatrizma8@gmail.com',
-          'arturhenrique722@gmail.com'
+          'arturhenrique722@gmail.com',
+          'pradoleo92@gmail.com',
+          'thiagocardoso2505@gmail.com',
+          'jonathassgoncalves@gmail.com'
         ]
         && request.auth.token.email_verified == true;
     }

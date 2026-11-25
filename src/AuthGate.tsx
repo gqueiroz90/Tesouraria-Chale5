@@ -35,6 +35,7 @@ const AVATARS = [
   ["0ea008e3-4daa-4b8e-b6d5-f007232cf10f", "Integrante 2"],
   ["9b39a5c6-a8dc-4526-910f-f845b2fd5383", "Integrante 4"],
   ["c2cd0dc6-41a9-48f0-bc5b-cb218763ad01", "Integrante 3"],
+  ["06b700af-6e33-484c-9d75-e76302b0e00b", "Integrante 6"],
 ].map(([id, label]) => ({ src: `/avatars/${id}.png`, label }));
 
 const pulse = keyframes`
@@ -171,7 +172,7 @@ export default function AuthGate() {
               </Heading>
               <AvatarGroup
                 size="lg"
-                max={5}
+                max={6}
                 spacing="-3"
                 justifyContent="center"
                 sx={{ "& .chakra-avatar": { border: "none !important" } }}

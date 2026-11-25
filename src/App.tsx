@@ -295,7 +295,7 @@ export default function App({ user, onSignOut }: Props) {
             <Box color="muted" fontSize="sm" mt={1}>
               {page === "caixa"
                 ? "Locações e gastos do caixa"
-                : "Despesas da casa divididas."}
+                : "Extrato"}
             </Box>
           </Box>
           <Flex gap={2} align="center" wrap="wrap" w={{ base: "full", md: "auto" }}>
