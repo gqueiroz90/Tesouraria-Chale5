@@ -27,6 +27,7 @@ import {
 } from "@chakra-ui/react";
 import Caixa from "./Caixa";
 import BookingForm from "./BookingForm";
+import CashExpenseForm from "./CashExpenseForm";
 import DepositForm from "./DepositForm";
 import Dashboard from "./Dashboard";
 import ExpenseForm from "./ExpenseForm";
@@ -38,6 +39,7 @@ import {
   monthOf,
   type Booking,
   type CashDeposit,
+  type CashExpense,
   type CashEntry,
   type Expense,
 } from "./types";
@@ -109,10 +111,12 @@ export default function App({ user, onSignOut }: Props) {
   const [editing, setEditing] = useState<Expense | null>(null);
   const [editingBooking, setEditingBooking] = useState<Booking | null>(null);
   const [editingDeposit, setEditingDeposit] = useState<CashDeposit | null>(null);
+  const [editingCashExpense, setEditingCashExpense] = useState<CashExpense | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const launchChoice = useDisclosure();
   const cashEntryChoice = useDisclosure();
   const cashDeposit = useDisclosure();
+  const cashExpenseModal = useDisclosure();
   const bookingLaunch = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
   const toast = useToast();
@@ -134,6 +138,10 @@ export default function App({ user, onSignOut }: Props) {
     () => (period === "geral" ? cashEntries : cashEntries.filter((entry) => monthOf(entry.date) === period)),
     [cashEntries, period]
   );
+  const filteredCashExpenses = useMemo(
+    () => (period === "geral" ? cash.items : cash.items.filter((expense) => monthOf(expense.date) === period)),
+    [cash.items, period]
+  );
 
   const openNew = () => {
     setEditing(null);
@@ -150,6 +158,11 @@ export default function App({ user, onSignOut }: Props) {
   const openCashForm = () => {
     launchChoice.onClose();
     cashEntryChoice.onOpen();
+  };
+  const openCashExpenseForm = () => {
+    launchChoice.onClose();
+    setEditingCashExpense(null);
+    cashExpenseModal.onOpen();
   };
   const backToLaunchChoiceFromCash = () => {
     cashEntryChoice.onClose();
@@ -190,6 +203,17 @@ export default function App({ user, onSignOut }: Props) {
       await remove(id);
     } catch {
       toast({ title: "Não foi possível excluir o lançamento.", status: "error" });
+    }
+  };
+  const editCashExpense = (expense: CashExpense) => {
+    setEditingCashExpense(expense);
+    cashExpenseModal.onOpen();
+  };
+  const deleteCashExpense = async (id: string) => {
+    try {
+      await cash.remove(id);
+    } catch {
+      toast({ title: "Não foi possível excluir o gasto do caixa.", status: "error" });
     }
   };
   const editCashEntry = (entry: CashEntry) => {
@@ -351,14 +375,14 @@ export default function App({ user, onSignOut }: Props) {
           </Flex>
         ) : error ? (
           <Alert status="error" borderRadius="12px"><AlertIcon />{error}</Alert>
-        ) : page === "lancamentos" && (bookings.loading || deposits.loading) ? (
+        ) : page === "lancamentos" && (bookings.loading || deposits.loading || cash.loading) ? (
           <Flex align="center" gap={3} color="muted" py={10}>
             <Spinner size="sm" />
             <Text>Carregando entradas do caixa...</Text>
           </Flex>
-        ) : page === "lancamentos" && (bookings.error || deposits.error) ? (
+        ) : page === "lancamentos" && (bookings.error || deposits.error || cash.error) ? (
           <Alert status="error" borderRadius="12px">
-            <AlertIcon />{bookings.error || deposits.error}
+            <AlertIcon />{bookings.error || deposits.error || cash.error}
           </Alert>
         ) : page === "dashboard" ? (
           <Dashboard
@@ -372,9 +396,12 @@ export default function App({ user, onSignOut }: Props) {
         ) : (
           <ExpenseList
             expenses={filtered}
+            cashExpenses={filteredCashExpenses}
             cashEntries={filteredCashEntries}
             onEdit={openEdit}
             onDelete={deleteExpense}
+            onEditCashExpense={editCashExpense}
+            onDeleteCashExpense={deleteCashExpense}
             onEditCashEntry={editCashEntry}
             onDeleteCashEntry={deleteCashEntry}
           />
@@ -388,6 +415,12 @@ export default function App({ user, onSignOut }: Props) {
         editing={editing}
         onSave={save}
         onBack={editing ? undefined : backToLaunchChoice}
+      />
+      <CashExpenseForm
+        isOpen={cashExpenseModal.isOpen}
+        onClose={cashExpenseModal.onClose}
+        editing={editingCashExpense}
+        onSave={cash.save}
       />
       <Modal isOpen={launchChoice.isOpen} onClose={launchChoice.onClose} isCentered>
         <ModalOverlay bg="blackAlpha.600" />
@@ -409,6 +442,15 @@ export default function App({ user, onSignOut }: Props) {
                   onClick={openExpenseForm}
                 >
                   Despesas
+                </Button>
+                <Button
+                  flex={1}
+                  minH="64px"
+                  colorScheme="teal"
+                  borderRadius="12px"
+                  onClick={openCashExpenseForm}
+                >
+                  Gasto do caixa
                 </Button>
                 <Button
                   flex={1}

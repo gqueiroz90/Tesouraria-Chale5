@@ -13,8 +13,15 @@ import {
   TabList,
   TabPanel,
   TabPanels,
+  Table,
+  TableContainer,
   Tabs,
+  Tbody,
+  Td,
+  Th,
+  Thead,
   Text,
+  Tr,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
@@ -36,6 +43,18 @@ import {
   type Expense,
 } from "./types";
 import DepositForm from "./DepositForm";
+
+type StatementEntry = {
+  id: string;
+  date: string;
+  description: string;
+  type: string;
+  typeColor: string;
+  amount: number;
+  direction: "in" | "out";
+  order: number;
+  balance: number;
+};
 
 interface Props {
   bookings: CollectionApi<Booking>;
@@ -82,6 +101,61 @@ export default function Caixa({ bookings, cash, deposits, expenses }: Props) {
       ].sort((a, b) => b.date.localeCompare(a.date)),
     [deposits.items, expenses]
   );
+
+  const statement = useMemo(() => {
+    const entries: Omit<StatementEntry, "balance">[] = [
+      ...bookings.items
+        .filter((booking) => booking.kind === "locacao")
+        .map((booking) => ({
+          id: `booking-${booking.id}`,
+          date: booking.checkIn,
+          description: booking.name,
+          type: "Entrada",
+          typeColor: "green",
+          amount: booking.amount,
+          direction: "in" as const,
+          order: 0,
+        })),
+      ...deposits.items.map((deposit) => ({
+        id: `deposit-${deposit.id}`,
+        date: deposit.date,
+        description: deposit.description,
+        type: "Entrada",
+        typeColor: "green",
+        amount: deposit.amount,
+        direction: "in" as const,
+        order: 0,
+      })),
+      ...expenses
+        .filter((expense) => expense.category === "caixa")
+        .map((expense) => ({
+          id: `expense-${expense.id}`,
+          date: expense.date,
+          description: expense.description,
+          type: "Entrada",
+          typeColor: "green",
+          amount: expense.amount,
+          direction: "in" as const,
+          order: 0,
+        })),
+      ...cash.items.map((expense) => ({
+        id: `cash-${expense.id}`,
+        date: expense.date,
+        description: expense.description,
+        type: "Saída",
+        typeColor: "red",
+        amount: expense.amount,
+        direction: "out" as const,
+        order: 1,
+      })),
+    ].sort((a, b) => a.date.localeCompare(b.date) || a.order - b.order || a.id.localeCompare(b.id));
+
+    let runningBalance = 0;
+    return entries.map((entry) => {
+      runningBalance += entry.direction === "in" ? entry.amount : -entry.amount;
+      return { ...entry, balance: runningBalance };
+    }).reverse();
+  }, [bookings.items, deposits.items, expenses, cash.items]);
 
   if (bookings.loading || cash.loading || deposits.loading) {
     return (
@@ -163,6 +237,7 @@ export default function Caixa({ bookings, cash, deposits, expenses }: Props) {
 
       <Tabs variant="soft-rounded" colorScheme="ocean" isLazy>
         <TabList flexWrap="wrap" gap={2} mb={4}>
+          <Tab fontSize={{ base: "sm", md: "md" }}>Extrato</Tab>
           <Tab fontSize={{ base: "sm", md: "md" }}>Calendário</Tab>
           <Tab fontSize={{ base: "sm", md: "md" }}>Locação</Tab>
           <Tab fontSize={{ base: "sm", md: "md" }}>Aportes</Tab>
@@ -170,6 +245,38 @@ export default function Caixa({ bookings, cash, deposits, expenses }: Props) {
           <Tab fontSize={{ base: "sm", md: "md" }}>Relatórios</Tab>
         </TabList>
         <TabPanels>
+          <TabPanel p={0}>
+            <Box bg="surface" borderWidth="1px" borderColor="line" borderRadius="20px" p={{ base: 3, md: 5 }}>
+              {statement.length === 0 ? (
+                <Text color="muted">Nenhuma movimentação no caixa.</Text>
+              ) : (
+                <TableContainer>
+                  <Table size="sm" minW="640px">
+                    <Thead>
+                      <Tr>
+                        <Th>Data</Th>
+                        <Th>Tipo</Th>
+                        <Th>Descrição</Th>
+                        <Th isNumeric>Valor</Th>
+                        <Th isNumeric>Saldo</Th>
+                      </Tr>
+                    </Thead>
+                    <Tbody>
+                      {statement.map((entry) => (
+                        <Tr key={entry.id}>
+                          <Td whiteSpace="nowrap">{formatDate(entry.date)}</Td>
+                          <Td><Badge colorScheme={entry.typeColor}>{entry.type}</Badge></Td>
+                          <Td>{entry.description}</Td>
+                          <Td isNumeric>{brl(entry.amount)}</Td>
+                          <Td isNumeric fontWeight="700">{brl(entry.balance)}</Td>
+                        </Tr>
+                      ))}
+                    </Tbody>
+                  </Table>
+                </TableContainer>
+              )}
+            </Box>
+          </TabPanel>
           <TabPanel p={0}>
             <BookingCalendar
               bookings={bookings.items}
