@@ -24,9 +24,9 @@ export const ALLOWED_EMAILS = [
   "gabrielcostadequeiroz@gmail.com",
   "beatrizma8@gmail.com",
   "arturhenrique722@gmail.com",
-  'pradoleo92@gmail.com',
-  'thiagocardoso2505@gmail.com',
-  'jonathassgoncalves@gmail.com',
+  "pradoleo92@gmail.com",
+  "thiagocardoso2505@gmail.com",
+  "jonathassgoncalves@gmail.com",
 ];
 
 export const isAllowedEmail = (email?: string | null) =>
