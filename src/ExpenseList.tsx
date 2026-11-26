@@ -47,6 +47,13 @@ type CashBlockRow =
   | { id: string; date: string; description: string; amount: number; source: "entry"; entry: CashEntry }
   | { id: string; date: string; description: string; amount: number; source: "expense"; category: CashCategory; expense: CashExpense };
 
+const cashCategoryColors: Record<CashCategory, string> = {
+  manutencao: "orange",
+  melhorias: "purple",
+  reposicao: "yellow",
+  outros: "pink",
+};
+
 export default function ExpenseList({
   expenses,
   cashExpenses,
@@ -59,7 +66,7 @@ export default function ExpenseList({
   onDeleteCashEntry,
 }: Props) {
   const [expenseFilter, setExpenseFilter] = useState<Category | "todas">("todas");
-  const [cashFilter, setCashFilter] = useState<CashCategory | "todas">("todas");
+  const [cashFilter, setCashFilter] = useState<CashCategory | CashEntry["type"] | "todas">("todas");
 
   const expenseFilters: { key: Category | "todas"; label: string }[] = [
     { key: "todas", label: "Todas" },
@@ -71,12 +78,21 @@ export default function ExpenseList({
   const rows = expenses
     .filter((e) => expenseFilter === "todas" || e.category === expenseFilter)
     .sort((a, b) => b.date.localeCompare(a.date));
-  const cashFilters: { key: CashCategory | "todas"; label: string }[] = [
-    { key: "todas", label: "Todas" },
+  const cashCategoryFilters: { key: CashCategory | CashEntry["type"]; label: string }[] = [
     ...Object.entries(CASH_CATEGORIES).map(([category, config]) => ({
       key: category as CashCategory,
       label: config.label,
     })),
+    { key: "Aporte" as const, label: "Aporte" },
+    { key: "Locação" as const, label: "Locação" },
+  ].sort((a, b) => {
+    if (a.label === "Outros") return 1;
+    if (b.label === "Outros") return -1;
+    return a.label.localeCompare(b.label, "pt-BR");
+  });
+  const cashFilters: { key: CashCategory | CashEntry["type"] | "todas"; label: string }[] = [
+    { key: "todas", label: "Todas" },
+    ...cashCategoryFilters,
   ];
   const cashRows: CashBlockRow[] = [
     ...cashEntries.map((entry) => ({
@@ -97,7 +113,11 @@ export default function ExpenseList({
       expense,
     })),
   ]
-    .filter((row) => cashFilter === "todas" || (row.source === "expense" && row.category === cashFilter))
+    .filter((row) =>
+      cashFilter === "todas" ||
+      (row.source === "expense" && row.category === cashFilter) ||
+      (row.source === "entry" && row.entry.type === cashFilter)
+    )
     .sort((a, b) => b.date.localeCompare(a.date));
 
   const confirmDelete = (id: string) => {
@@ -236,8 +256,8 @@ export default function ExpenseList({
                   <Flex justify="space-between" align="center" gap={2} mb={2} wrap="wrap">
                     <Badge
                       colorScheme={row.source === "entry"
-                        ? row.entry.type === "Locação" ? "teal" : "blue"
-                        : CASH_CATEGORIES[row.category].color}
+                        ? row.entry.type === "Locação" ? "shell" : "blue"
+                        : cashCategoryColors[row.category]}
                     >
                       {row.source === "entry" ? row.entry.type : CASH_CATEGORIES[row.category].label}
                     </Badge>
@@ -305,8 +325,8 @@ export default function ExpenseList({
                       <Td>
                         <Badge
                           colorScheme={row.source === "entry"
-                            ? row.entry.type === "Locação" ? "teal" : "blue"
-                            : CASH_CATEGORIES[row.category].color}
+                            ? row.entry.type === "Locação" ? "shell" : "blue"
+                            : cashCategoryColors[row.category]}
                         >
                           {row.source === "entry" ? row.entry.type : CASH_CATEGORIES[row.category].label}
                         </Badge>
